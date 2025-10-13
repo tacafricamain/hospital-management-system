@@ -797,6 +797,153 @@ export default function Patients() {
           </div>
         </div>
       )}
+      
+      {/* Filter Modal */}
+      {showFilterModal && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-2xl shadow-2xl w-full max-w-lg animate-fadeIn">
+            {/* Modal Header */}
+            <div className="bg-white border-b border-gray-200 px-6 py-4 flex items-center justify-between rounded-t-2xl">
+              <div>
+                <h2 className="text-xl font-bold text-gray-900">Filter Patients</h2>
+                <p className="text-sm text-gray-500">Apply filters to narrow down results</p>
+              </div>
+              <button 
+                onClick={() => setShowFilterModal(false)}
+                className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+              >
+                <X size={20} className="text-gray-500" />
+              </button>
+            </div>
+
+            {/* Modal Body */}
+            <div className="p-6 space-y-4">
+              {/* Status Filter */}
+              <div>
+                <label className="block text-sm font-semibold text-gray-900 mb-2">Status</label>
+                <select 
+                  value={filters.status}
+                  onChange={(e) => setFilters({ ...filters, status: e.target.value })}
+                  className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#0066CC] focus:border-transparent"
+                >
+                  <option value="all">All Status</option>
+                  <option value="Active">Active</option>
+                  <option value="Discharged">Discharged</option>
+                  <option value="Critical">Critical</option>
+                </select>
+              </div>
+
+              {/* Department Filter */}
+              <div>
+                <label className="block text-sm font-semibold text-gray-900 mb-2">Department</label>
+                <select 
+                  value={filters.department}
+                  onChange={(e) => setFilters({ ...filters, department: e.target.value })}
+                  className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#0066CC] focus:border-transparent"
+                >
+                  <option value="all">All Departments</option>
+                  <option value="Cardiology">Cardiology</option>
+                  <option value="Surgery">Surgery</option>
+                  <option value="General">General</option>
+                  <option value="Neurology">Neurology</option>
+                  <option value="Pediatrics">Pediatrics</option>
+                  <option value="Orthopedics">Orthopedics</option>
+                </select>
+              </div>
+
+              {/* Gender Filter */}
+              <div>
+                <label className="block text-sm font-semibold text-gray-900 mb-2">Gender</label>
+                <div className="grid grid-cols-3 gap-2">
+                  <button
+                    onClick={() => setFilters({ ...filters, gender: 'all' })}
+                    className={`px-4 py-2.5 rounded-lg border-2 font-medium transition-all ${
+                      filters.gender === 'all'
+                        ? 'border-[#0066CC] bg-blue-50 text-[#0066CC]'
+                        : 'border-gray-300 hover:bg-gray-50'
+                    }`}
+                  >
+                    All
+                  </button>
+                  <button
+                    onClick={() => setFilters({ ...filters, gender: 'Male' })}
+                    className={`px-4 py-2.5 rounded-lg border-2 font-medium transition-all ${
+                      filters.gender === 'Male'
+                        ? 'border-[#0066CC] bg-blue-50 text-[#0066CC]'
+                        : 'border-gray-300 hover:bg-gray-50'
+                    }`}
+                  >
+                    Male
+                  </button>
+                  <button
+                    onClick={() => setFilters({ ...filters, gender: 'Female' })}
+                    className={`px-4 py-2.5 rounded-lg border-2 font-medium transition-all ${
+                      filters.gender === 'Female'
+                        ? 'border-[#0066CC] bg-blue-50 text-[#0066CC]'
+                        : 'border-gray-300 hover:bg-gray-50'
+                    }`}
+                  >
+                    Female
+                  </button>
+                </div>
+              </div>
+
+              {/* Age Range Filter */}
+              <div>
+                <label className="block text-sm font-semibold text-gray-900 mb-2">Age Range</label>
+                <select 
+                  value={filters.ageRange}
+                  onChange={(e) => setFilters({ ...filters, ageRange: e.target.value })}
+                  className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#0066CC] focus:border-transparent"
+                >
+                  <option value="all">All Ages</option>
+                  <option value="0-18">0-18 years (Pediatric)</option>
+                  <option value="19-35">19-35 years (Young Adult)</option>
+                  <option value="36-50">36-50 years (Adult)</option>
+                  <option value="51+">51+ years (Senior)</option>
+                </select>
+              </div>
+
+              {/* Active Filters Summary */}
+              {activeFilterCount > 0 && (
+                <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-sm font-semibold text-gray-900">Active Filters</p>
+                      <p className="text-xs text-gray-600 mt-1">{activeFilterCount} filter{activeFilterCount > 1 ? 's' : ''} applied</p>
+                    </div>
+                    <button 
+                      onClick={handleResetFilters}
+                      className="text-sm text-[#0066CC] hover:text-[#0052A3] font-medium"
+                    >
+                      Reset All
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* Modal Footer */}
+            <div className="bg-gray-50 border-t border-gray-200 px-6 py-4 flex items-center justify-end gap-3 rounded-b-2xl">
+              <button 
+                onClick={() => setShowFilterModal(false)}
+                className="px-4 py-2.5 border border-gray-300 text-gray-700 rounded-lg font-medium hover:bg-gray-100 transition-colors"
+              >
+                Cancel
+              </button>
+              <button 
+                onClick={handleApplyFilters}
+                className="px-6 py-2.5 bg-[#0066CC] hover:bg-[#0052A3] text-white rounded-lg font-medium shadow-md hover:shadow-lg transition-all flex items-center gap-2"
+              >
+                <Filter size={18} />
+                Apply Filters
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      <Footer />
     </div>
   )
 }

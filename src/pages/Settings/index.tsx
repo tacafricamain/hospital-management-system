@@ -1,6 +1,7 @@
 import { User, Building2, Bell, Shield, Database, Palette, Save } from 'lucide-react'
 import Sidebar from '../../components/Sidebar/Sidebar'
 import Navbar from '../../components/Navbar/Navbar'
+import Footer from '../../components/Footer/Footer'
 import Avatar from '../../components/Avatar/Avatar'
 
 export default function Settings() {

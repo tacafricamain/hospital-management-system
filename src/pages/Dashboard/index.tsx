@@ -1,5 +1,6 @@
 import Sidebar from '../../components/Sidebar/Sidebar'
 import Navbar from '../../components/Navbar/Navbar'
+import Footer from '../../components/Footer/Footer'
 import KpiCard from '../../components/Card/KpiCard'
 import OverviewChart from '../../components/Chart/OverviewChart'
 import FinanceChart from '../../components/Chart/FinanceChart'
@@ -186,6 +187,8 @@ export default function Dashboard() {
         <section className="bg-white rounded-2xl border border-gray-200 p-6 animate-fadeInUp" style={{ animationDelay: '1s' }}>
           <PatientTable />
         </section>
+
+        <Footer />
       </main>
     </div>
   )
