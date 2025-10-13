@@ -4,6 +4,12 @@ export default {
     "./index.html",
     "./src/**/*.{js,ts,jsx,tsx}",
   ],
-  theme: { extend: {} },
+  theme: { 
+    extend: {
+      fontFamily: {
+        sans: ['DM Sans', 'system-ui', '-apple-system', 'sans-serif'],
+      },
+    },
+  },
   plugins: [],
 }
