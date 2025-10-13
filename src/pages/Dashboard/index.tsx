@@ -1,11 +1,11 @@
-import React from 'react';
-import Sidebar from '../../components/Sidebar/Sidebar';
-import Navbar from '../../components/Navbar/Navbar';
-import KpiCard from '../../components/Card/KpiCard';
-import OverviewChart from '../../components/Chart/OverviewChart';
-import AppointmentList from '../../components/AppointmentList/AppointmentList';
-import PatientTable from '../../components/Table/PatientTable';
-import { Users, Calendar, UserPlus, DollarSign, Activity, Clock, AlertCircle, TrendingUp } from 'lucide-react';
+import Sidebar from '../../components/Sidebar/Sidebar'
+import Navbar from '../../components/Navbar/Navbar'
+import KpiCard from '../../components/Card/KpiCard'
+import OverviewChart from '../../components/Chart/OverviewChart'
+import FinanceChart from '../../components/Chart/FinanceChart'
+import AppointmentList from '../../components/AppointmentList/AppointmentList'
+import PatientTable from '../../components/Table/PatientTable'
+import { Users, Calendar, UserPlus, DollarSign, Activity, Clock, AlertCircle, TrendingUp } from 'lucide-react'
 
 export default function Dashboard() {
   return (
@@ -128,11 +128,65 @@ export default function Dashboard() {
           </div>
         </section>
 
+        {/* Finance Chart Section */}
+        <section className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <div className="bg-white rounded-2xl border border-gray-200 p-6 animate-fadeInUp" style={{ animationDelay: '0.8s' }}>
+            <div className="flex items-center justify-between mb-6">
+              <div>
+                <h2 className="text-lg font-semibold text-gray-900">Revenue Breakdown</h2>
+                <p className="text-sm text-gray-500">Financial distribution by service</p>
+              </div>
+            </div>
+            <FinanceChart />
+          </div>
+
+          <div className="bg-white rounded-2xl border border-gray-200 p-6 animate-fadeInUp" style={{ animationDelay: '0.9s' }}>
+            <h3 className="text-lg font-semibold text-gray-900 mb-4">Top Services</h3>
+            <div className="space-y-4">
+              <div className="flex items-center justify-between p-3 bg-blue-50 rounded-lg border border-blue-200">
+                <div className="flex items-center gap-3">
+                  <div className="w-3 h-3 rounded-full bg-[#0066CC]"></div>
+                  <span className="text-sm font-medium text-gray-900">Consultations</span>
+                </div>
+                <span className="text-sm font-bold text-gray-900">$43,505</span>
+              </div>
+              <div className="flex items-center justify-between p-3 bg-green-50 rounded-lg border border-green-200">
+                <div className="flex items-center gap-3">
+                  <div className="w-3 h-3 rounded-full bg-[#10B981]"></div>
+                  <span className="text-sm font-medium text-gray-900">Surgeries</span>
+                </div>
+                <span className="text-sm font-bold text-gray-900">$31,075</span>
+              </div>
+              <div className="flex items-center justify-between p-3 bg-orange-50 rounded-lg border border-orange-200">
+                <div className="flex items-center gap-3">
+                  <div className="w-3 h-3 rounded-full bg-[#F59E0B]"></div>
+                  <span className="text-sm font-medium text-gray-900">Lab Tests</span>
+                </div>
+                <span className="text-sm font-bold text-gray-900">$24,860</span>
+              </div>
+              <div className="flex items-center justify-between p-3 bg-red-50 rounded-lg border border-red-200">
+                <div className="flex items-center gap-3">
+                  <div className="w-3 h-3 rounded-full bg-[#EF4444]"></div>
+                  <span className="text-sm font-medium text-gray-900">Medications</span>
+                </div>
+                <span className="text-sm font-bold text-gray-900">$18,645</span>
+              </div>
+              <div className="flex items-center justify-between p-3 bg-purple-50 rounded-lg border border-purple-200">
+                <div className="flex items-center gap-3">
+                  <div className="w-3 h-3 rounded-full bg-[#8B5CF6]"></div>
+                  <span className="text-sm font-medium text-gray-900">Other Services</span>
+                </div>
+                <span className="text-sm font-bold text-gray-900">$6,215</span>
+              </div>
+            </div>
+          </div>
+        </section>
+
         {/* Patient Table */}
-        <section className="bg-white rounded-2xl border border-gray-200 p-6 animate-fadeInUp" style={{ animationDelay: '0.8s' }}>
+        <section className="bg-white rounded-2xl border border-gray-200 p-6 animate-fadeInUp" style={{ animationDelay: '1s' }}>
           <PatientTable />
         </section>
       </main>
     </div>
-  );
+  )
 }

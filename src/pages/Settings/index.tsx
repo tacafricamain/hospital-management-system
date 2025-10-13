@@ -25,7 +25,7 @@ export default function Settings() {
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           
-          <div className="bg-white rounded-2xl border border-gray-200 p-6 hover:shadow-xl transition-shadow">
+          <div className="bg-white rounded-2xl border border-gray-200 p-6">
             <div className="flex items-center gap-3 mb-6">
               <div className="p-3 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl shadow-lg">
                 <User className="text-white" size={24} />
@@ -63,7 +63,7 @@ export default function Settings() {
             </div>
           </div>
 
-          <div className="bg-white rounded-2xl border border-gray-200 p-6 hover:shadow-xl transition-shadow">
+          <div className="bg-white rounded-2xl border border-gray-200 p-6">
             <div className="flex items-center gap-3 mb-6">
               <div className="p-3 bg-gradient-to-br from-green-500 to-green-600 rounded-xl shadow-lg">
                 <Building2 className="text-white" size={24} />
@@ -89,7 +89,7 @@ export default function Settings() {
             </div>
           </div>
 
-          <div className="bg-white rounded-2xl border border-gray-200 p-6 hover:shadow-xl transition-shadow">
+          <div className="bg-white rounded-2xl border border-gray-200 p-6">
             <div className="flex items-center gap-3 mb-6">
               <div className="p-3 bg-gradient-to-br from-yellow-500 to-yellow-600 rounded-xl shadow-lg">
                 <Bell className="text-white" size={24} />
@@ -115,7 +115,7 @@ export default function Settings() {
             </div>
           </div>
 
-          <div className="bg-white rounded-2xl border border-gray-200 p-6 hover:shadow-xl transition-shadow">
+          <div className="bg-white rounded-2xl border border-gray-200 p-6">
             <div className="flex items-center gap-3 mb-6">
               <div className="p-3 bg-gradient-to-br from-red-500 to-red-600 rounded-xl shadow-lg">
                 <Shield className="text-white" size={24} />

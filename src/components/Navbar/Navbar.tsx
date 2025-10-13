@@ -1,5 +1,5 @@
 import { Bell, MessageSquare, Bed, Search, ChevronDown, User, Settings, LogOut, HelpCircle, AlertCircle, Calendar, DollarSign, X } from 'lucide-react'
-import { useState } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import Avatar from '../Avatar/Avatar'
 
 export default function Navbar() {
@@ -10,6 +10,10 @@ export default function Navbar() {
   const [showMessages, setShowMessages] = useState(false)
   const [showNewPatientModal, setShowNewPatientModal] = useState(false)
   const userRole = localStorage.getItem('userRole') || 'doctor'
+  
+  const messagesRef = useRef<HTMLDivElement>(null)
+  const notificationsRef = useRef<HTMLDivElement>(null)
+  const profileRef = useRef<HTMLDivElement>(null)
   
   const userName = {
     admin: 'Admin User',
@@ -47,6 +51,22 @@ export default function Navbar() {
     setShowProfileDropdown(true)
   }
 
+  // Close dropdowns when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        messagesRef.current && !messagesRef.current.contains(event.target as Node) &&
+        notificationsRef.current && !notificationsRef.current.contains(event.target as Node) &&
+        profileRef.current && !profileRef.current.contains(event.target as Node)
+      ) {
+        closeAllDropdowns()
+      }
+    }
+
+    document.addEventListener('mousedown', handleClickOutside)
+    return () => document.removeEventListener('mousedown', handleClickOutside)
+  }, [])
+
   return (
     <header className="flex items-center justify-between py-4 px-6 bg-white rounded-xl border border-gray-200 shadow-sm">
       {/* Left: Greeting & Search */}
@@ -77,7 +97,7 @@ export default function Navbar() {
         </div>
 
         {/* Messages */}
-        <div className="relative">
+        <div className="relative" ref={messagesRef}>
           <button 
             onClick={toggleMessages}
             className="relative p-2 hover:bg-gray-100 rounded-lg transition-colors"
@@ -130,7 +150,7 @@ export default function Navbar() {
         </div>
 
         {/* Notifications */}
-        <div className="relative">
+        <div className="relative" ref={notificationsRef}>
           <button 
             onClick={toggleNotifications}
             className="relative p-2 hover:bg-gray-100 rounded-lg transition-colors"
@@ -192,7 +212,7 @@ export default function Navbar() {
         <div className="w-px h-8 bg-gray-300 hidden sm:block"></div>
 
         {/* Profile */}
-        <div className="relative">
+        <div className="relative" ref={profileRef}>
           <button 
             onClick={toggleProfile}
             className="flex items-center gap-3 hover:bg-gray-100 rounded-lg pl-2 pr-3 py-2 transition-colors"
