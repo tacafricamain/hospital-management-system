@@ -1,7 +1,7 @@
 import Sidebar from '../../components/Sidebar/Sidebar'
 import Navbar from '../../components/Navbar/Navbar'
-import Footer from '../../components/Footer/Footer'
 import Avatar from '../../components/Avatar/Avatar'
+import Toast from '../../components/Toast/Toast'
 import { Search, Filter, Download, Plus, X, User, Calendar, Phone, Mail, MapPin, FileText, Activity, AlertCircle } from 'lucide-react'
 import { useState } from 'react'
 
@@ -14,6 +14,7 @@ export default function Patients() {
   const [showExportModal, setShowExportModal] = useState(false)
   const [exportFormat, setExportFormat] = useState('csv')
   const [showFilterModal, setShowFilterModal] = useState(false)
+  const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' | 'info' | 'warning' } | null>(null)
   const [filters, setFilters] = useState({
     status: 'all',
     department: 'all',
@@ -72,6 +73,7 @@ export default function Patients() {
     console.log('Saving patient:', formData)
     setEditingPatient(null)
     setFormData({})
+    setToast({ message: 'Patient information updated successfully!', type: 'success' })
   }
 
   const handleInputChange = (field: string, value: string) => {
@@ -92,6 +94,9 @@ export default function Patients() {
       'Last Visit': p.lastVisit
     }))
 
+    let exportSuccess = false
+    let fileName = ''
+
     if (exportFormat === 'csv') {
       // Convert to CSV
       const headers = Object.keys(dataToExport[0]).join(',')
@@ -102,8 +107,10 @@ export default function Patients() {
       const url = window.URL.createObjectURL(blob)
       const a = document.createElement('a')
       a.href = url
-      a.download = `patients_${new Date().toISOString().split('T')[0]}.csv`
+      fileName = `patients_${new Date().toISOString().split('T')[0]}.csv`
+      a.download = fileName
       a.click()
+      exportSuccess = true
     } else if (exportFormat === 'json') {
       // Export as JSON
       const json = JSON.stringify(dataToExport, null, 2)
@@ -111,19 +118,30 @@ export default function Patients() {
       const url = window.URL.createObjectURL(blob)
       const a = document.createElement('a')
       a.href = url
-      a.download = `patients_${new Date().toISOString().split('T')[0]}.json`
+      fileName = `patients_${new Date().toISOString().split('T')[0]}.json`
+      a.download = fileName
       a.click()
+      exportSuccess = true
     } else if (exportFormat === 'pdf') {
       // Simulate PDF export
       console.log('PDF export would be generated here')
-      alert('PDF export feature would generate a formatted PDF document')
+      exportSuccess = true
+      fileName = 'PDF document'
     }
 
     setShowExportModal(false)
+    
+    if (exportSuccess) {
+      setToast({ 
+        message: `Successfully exported ${filteredPatients.length} patient records as ${exportFormat.toUpperCase()}!`, 
+        type: 'success' 
+      })
+    }
   }
 
   const handleApplyFilters = () => {
     setShowFilterModal(false)
+    setToast({ message: `${activeFilterCount} filter${activeFilterCount > 1 ? 's' : ''} applied successfully!`, type: 'info' })
   }
 
   const handleResetFilters = () => {
@@ -340,332 +358,332 @@ export default function Patients() {
             </div>
           </div>
         </div>
+      </main>
 
-        {/* Patient Details Modal */}
-        {selectedPatient && (
-          <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-            <div className="bg-white rounded-2xl shadow-2xl w-full max-w-3xl max-h-[90vh] overflow-auto animate-fadeIn">
-              {/* Modal Header */}
-              <div className="sticky top-0 bg-white border-b border-gray-200 px-6 py-4 flex items-center justify-between rounded-t-2xl">
-                <div className="flex items-center gap-4">
-                  <Avatar name={selectedPatient.name} size={60} style="micah" className="ring-4 ring-blue-100" />
-                  <div>
-                    <h2 className="text-xl font-bold text-gray-900">{selectedPatient.name}</h2>
-                    <p className="text-sm text-gray-500">{selectedPatient.id} • {selectedPatient.gender}</p>
-                  </div>
+      {/* Patient Details Modal */}
+      {selectedPatient && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-2xl shadow-2xl w-full max-w-3xl max-h-[90vh] overflow-auto animate-fadeIn">
+            {/* Modal Header */}
+            <div className="sticky top-0 bg-white border-b border-gray-200 px-6 py-4 flex items-center justify-between rounded-t-2xl">
+              <div className="flex items-center gap-4">
+                <Avatar name={selectedPatient.name} size={60} style="micah" className="ring-4 ring-blue-100" />
+                <div>
+                  <h2 className="text-xl font-bold text-gray-900">{selectedPatient.name}</h2>
+                  <p className="text-sm text-gray-500">{selectedPatient.id} • {selectedPatient.gender}</p>
                 </div>
-                <button 
-                  onClick={() => setSelectedPatient(null)}
-                  className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
-                >
-                  <X size={20} className="text-gray-500" />
-                </button>
               </div>
+              <button 
+                onClick={() => setSelectedPatient(null)}
+                className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+              >
+                <X size={20} className="text-gray-500" />
+              </button>
+            </div>
 
-              {/* Modal Body */}
-              <div className="p-6 space-y-6">
-                {/* Personal Information */}
-                <div>
-                  <h3 className="text-sm font-semibold text-gray-900 mb-4 flex items-center gap-2">
-                    <User size={16} className="text-[#0066CC]" />
-                    Personal Information
-                  </h3>
-                  <div className="grid grid-cols-2 gap-4">
-                    <div className="p-3 bg-gray-50 rounded-lg">
-                      <p className="text-xs text-gray-500">Date of Birth</p>
-                      <p className="text-sm font-medium text-gray-900 mt-1">{selectedPatient.dob}</p>
-                    </div>
-                    <div className="p-3 bg-gray-50 rounded-lg">
-                      <p className="text-xs text-gray-500">Age</p>
-                      <p className="text-sm font-medium text-gray-900 mt-1">{selectedPatient.age} years</p>
-                    </div>
-                    <div className="p-3 bg-gray-50 rounded-lg">
-                      <p className="text-xs text-gray-500">Blood Type</p>
-                      <p className="text-sm font-medium text-gray-900 mt-1">{selectedPatient.bloodType}</p>
-                    </div>
-                    <div className="p-3 bg-gray-50 rounded-lg">
-                      <p className="text-xs text-gray-500">Gender</p>
-                      <p className="text-sm font-medium text-gray-900 mt-1">{selectedPatient.gender}</p>
-                    </div>
+            {/* Modal Body */}
+            <div className="p-6 space-y-6">
+              {/* Personal Information */}
+              <div>
+                <h3 className="text-sm font-semibold text-gray-900 mb-4 flex items-center gap-2">
+                  <User size={16} className="text-[#0066CC]" />
+                  Personal Information
+                </h3>
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="p-3 bg-gray-50 rounded-lg">
+                    <p className="text-xs text-gray-500">Date of Birth</p>
+                    <p className="text-sm font-medium text-gray-900 mt-1">{selectedPatient.dob}</p>
                   </div>
-                </div>
-
-                {/* Contact Information */}
-                <div>
-                  <h3 className="text-sm font-semibold text-gray-900 mb-4 flex items-center gap-2">
-                    <Phone size={16} className="text-[#0066CC]" />
-                    Contact Information
-                  </h3>
-                  <div className="space-y-3">
-                    <div className="p-3 bg-gray-50 rounded-lg">
-                      <p className="text-xs text-gray-500">Phone Number</p>
-                      <p className="text-sm font-medium text-gray-900 mt-1">{selectedPatient.phone}</p>
-                    </div>
-                    <div className="p-3 bg-gray-50 rounded-lg">
-                      <p className="text-xs text-gray-500">Email Address</p>
-                      <p className="text-sm font-medium text-gray-900 mt-1">{selectedPatient.email}</p>
-                    </div>
-                    <div className="p-3 bg-gray-50 rounded-lg">
-                      <p className="text-xs text-gray-500">Address</p>
-                      <p className="text-sm font-medium text-gray-900 mt-1">{selectedPatient.address}</p>
-                    </div>
+                  <div className="p-3 bg-gray-50 rounded-lg">
+                    <p className="text-xs text-gray-500">Age</p>
+                    <p className="text-sm font-medium text-gray-900 mt-1">{selectedPatient.age} years</p>
                   </div>
-                </div>
-
-                {/* Medical Information */}
-                <div>
-                  <h3 className="text-sm font-semibold text-gray-900 mb-4 flex items-center gap-2">
-                    <Activity size={16} className="text-[#0066CC]" />
-                    Medical Information
-                  </h3>
-                  <div className="grid grid-cols-2 gap-4">
-                    <div className="p-3 bg-gray-50 rounded-lg">
-                      <p className="text-xs text-gray-500">Department</p>
-                      <p className="text-sm font-medium text-gray-900 mt-1">{selectedPatient.dept}</p>
-                    </div>
-                    <div className="p-3 bg-gray-50 rounded-lg">
-                      <p className="text-xs text-gray-500">Last Visit</p>
-                      <p className="text-sm font-medium text-gray-900 mt-1">{selectedPatient.lastVisit}</p>
-                    </div>
-                    <div className="col-span-2 p-3 bg-gray-50 rounded-lg">
-                      <p className="text-xs text-gray-500">Current Diagnosis</p>
-                      <p className="text-sm font-medium text-gray-900 mt-1">{selectedPatient.diagnosis}</p>
-                    </div>
+                  <div className="p-3 bg-gray-50 rounded-lg">
+                    <p className="text-xs text-gray-500">Blood Type</p>
+                    <p className="text-sm font-medium text-gray-900 mt-1">{selectedPatient.bloodType}</p>
+                  </div>
+                  <div className="p-3 bg-gray-50 rounded-lg">
+                    <p className="text-xs text-gray-500">Gender</p>
+                    <p className="text-sm font-medium text-gray-900 mt-1">{selectedPatient.gender}</p>
                   </div>
                 </div>
               </div>
 
-              {/* Modal Footer */}
-              <div className="sticky bottom-0 bg-gray-50 border-t border-gray-200 px-6 py-4 flex items-center justify-end gap-3 rounded-b-2xl">
-                <button 
-                  onClick={() => setSelectedPatient(null)}
-                  className="px-4 py-2.5 border border-gray-300 text-gray-700 rounded-lg font-medium hover:bg-gray-100 transition-colors"
-                >
-                  Close
-                </button>
-                <button 
-                  onClick={() => handleEditPatient(selectedPatient)}
-                  className="px-6 py-2.5 bg-[#0066CC] hover:bg-[#0052A3] text-white rounded-lg font-medium transition-colors"
-                >
-                  Edit Patient
-                </button>
+              {/* Contact Information */}
+              <div>
+                <h3 className="text-sm font-semibold text-gray-900 mb-4 flex items-center gap-2">
+                  <Phone size={16} className="text-[#0066CC]" />
+                  Contact Information
+                </h3>
+                <div className="space-y-3">
+                  <div className="p-3 bg-gray-50 rounded-lg">
+                    <p className="text-xs text-gray-500">Phone Number</p>
+                    <p className="text-sm font-medium text-gray-900 mt-1">{selectedPatient.phone}</p>
+                  </div>
+                  <div className="p-3 bg-gray-50 rounded-lg">
+                    <p className="text-xs text-gray-500">Email Address</p>
+                    <p className="text-sm font-medium text-gray-900 mt-1">{selectedPatient.email}</p>
+                  </div>
+                  <div className="p-3 bg-gray-50 rounded-lg">
+                    <p className="text-xs text-gray-500">Address</p>
+                    <p className="text-sm font-medium text-gray-900 mt-1">{selectedPatient.address}</p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Medical Information */}
+              <div>
+                <h3 className="text-sm font-semibold text-gray-900 mb-4 flex items-center gap-2">
+                  <Activity size={16} className="text-[#0066CC]" />
+                  Medical Information
+                </h3>
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="p-3 bg-gray-50 rounded-lg">
+                    <p className="text-xs text-gray-500">Department</p>
+                    <p className="text-sm font-medium text-gray-900 mt-1">{selectedPatient.dept}</p>
+                  </div>
+                  <div className="p-3 bg-gray-50 rounded-lg">
+                    <p className="text-xs text-gray-500">Last Visit</p>
+                    <p className="text-sm font-medium text-gray-900 mt-1">{selectedPatient.lastVisit}</p>
+                  </div>
+                  <div className="col-span-2 p-3 bg-gray-50 rounded-lg">
+                    <p className="text-xs text-gray-500">Current Diagnosis</p>
+                    <p className="text-sm font-medium text-gray-900 mt-1">{selectedPatient.diagnosis}</p>
+                  </div>
+                </div>
               </div>
             </div>
-          </div>
-        )}
 
-        {/* Edit Patient Modal */}
-        {editingPatient && (
-          <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-            <div className="bg-white rounded-2xl shadow-2xl w-full max-w-4xl max-h-[90vh] overflow-auto animate-fadeIn">
-              {/* Modal Header */}
-              <div className="sticky top-0 bg-white border-b border-gray-200 px-6 py-4 flex items-center justify-between rounded-t-2xl">
-                <div>
-                  <h2 className="text-xl font-bold text-gray-900">Edit Patient Information</h2>
-                  <p className="text-sm text-gray-500">{editingPatient.name} • {editingPatient.id}</p>
+            {/* Modal Footer */}
+            <div className="sticky bottom-0 bg-gray-50 border-t border-gray-200 px-6 py-4 flex items-center justify-end gap-3 rounded-b-2xl">
+              <button 
+                onClick={() => setSelectedPatient(null)}
+                className="px-4 py-2.5 border border-gray-300 text-gray-700 rounded-lg font-medium hover:bg-gray-100 transition-colors"
+              >
+                Close
+              </button>
+              <button 
+                onClick={() => handleEditPatient(selectedPatient)}
+                className="px-6 py-2.5 bg-[#0066CC] hover:bg-[#0052A3] text-white rounded-lg font-medium transition-colors"
+              >
+                Edit Patient
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Edit Patient Modal */}
+      {editingPatient && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-2xl shadow-2xl w-full max-w-4xl max-h-[90vh] overflow-auto animate-fadeIn">
+            {/* Modal Header */}
+            <div className="sticky top-0 bg-white border-b border-gray-200 px-6 py-4 flex items-center justify-between rounded-t-2xl">
+              <div>
+                <h2 className="text-xl font-bold text-gray-900">Edit Patient Information</h2>
+                <p className="text-sm text-gray-500">{editingPatient.name} • {editingPatient.id}</p>
+              </div>
+              <button 
+                onClick={() => setEditingPatient(null)}
+                className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+              >
+                <X size={20} className="text-gray-500" />
+              </button>
+            </div>
+
+            {/* Modal Body */}
+            <div className="p-6 space-y-6">
+              {/* Personal Information */}
+              <div>
+                <h3 className="text-sm font-semibold text-gray-900 mb-4 flex items-center gap-2">
+                  <User size={16} className="text-[#0066CC]" />
+                  Personal Information
+                </h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Full Name</label>
+                    <input 
+                      type="text" 
+                      value={formData.name || ''}
+                      onChange={(e) => handleInputChange('name', e.target.value)}
+                      className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#0066CC] focus:border-transparent"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Date of Birth</label>
+                    <input 
+                      type="date" 
+                      value={formData.dob || ''}
+                      onChange={(e) => handleInputChange('dob', e.target.value)}
+                      className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#0066CC] focus:border-transparent"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Gender</label>
+                    <select 
+                      value={formData.gender || ''}
+                      onChange={(e) => handleInputChange('gender', e.target.value)}
+                      className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#0066CC] focus:border-transparent"
+                    >
+                      <option value="">Select Gender</option>
+                      <option value="Male">Male</option>
+                      <option value="Female">Female</option>
+                      <option value="Other">Other</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Blood Type</label>
+                    <select 
+                      value={formData.bloodType || ''}
+                      onChange={(e) => handleInputChange('bloodType', e.target.value)}
+                      className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#0066CC] focus:border-transparent"
+                    >
+                      <option value="">Select Blood Type</option>
+                      <option value="A+">A+</option>
+                      <option value="A-">A-</option>
+                      <option value="B+">B+</option>
+                      <option value="B-">B-</option>
+                      <option value="AB+">AB+</option>
+                      <option value="AB-">AB-</option>
+                      <option value="O+">O+</option>
+                      <option value="O-">O-</option>
+                    </select>
+                  </div>
                 </div>
-                <button 
-                  onClick={() => setEditingPatient(null)}
-                  className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
-                >
-                  <X size={20} className="text-gray-500" />
-                </button>
               </div>
 
-              {/* Modal Body */}
-              <div className="p-6 space-y-6">
-                {/* Personal Information */}
-                <div>
-                  <h3 className="text-sm font-semibold text-gray-900 mb-4 flex items-center gap-2">
-                    <User size={16} className="text-[#0066CC]" />
-                    Personal Information
-                  </h3>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">Full Name</label>
-                      <input 
-                        type="text" 
-                        value={formData.name || ''}
-                        onChange={(e) => handleInputChange('name', e.target.value)}
-                        className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#0066CC] focus:border-transparent"
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">Date of Birth</label>
-                      <input 
-                        type="date" 
-                        value={formData.dob || ''}
-                        onChange={(e) => handleInputChange('dob', e.target.value)}
-                        className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#0066CC] focus:border-transparent"
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">Gender</label>
-                      <select 
-                        value={formData.gender || ''}
-                        onChange={(e) => handleInputChange('gender', e.target.value)}
-                        className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#0066CC] focus:border-transparent"
-                      >
-                        <option value="">Select Gender</option>
-                        <option value="Male">Male</option>
-                        <option value="Female">Female</option>
-                        <option value="Other">Other</option>
-                      </select>
-                    </div>
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">Blood Type</label>
-                      <select 
-                        value={formData.bloodType || ''}
-                        onChange={(e) => handleInputChange('bloodType', e.target.value)}
-                        className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#0066CC] focus:border-transparent"
-                      >
-                        <option value="">Select Blood Type</option>
-                        <option value="A+">A+</option>
-                        <option value="A-">A-</option>
-                        <option value="B+">B+</option>
-                        <option value="B-">B-</option>
-                        <option value="AB+">AB+</option>
-                        <option value="AB-">AB-</option>
-                        <option value="O+">O+</option>
-                        <option value="O-">O-</option>
-                      </select>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Contact Information */}
-                <div>
-                  <h3 className="text-sm font-semibold text-gray-900 mb-4 flex items-center gap-2">
-                    <Phone size={16} className="text-[#0066CC]" />
-                    Contact Information
-                  </h3>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">Phone Number</label>
-                      <input 
-                        type="tel" 
-                        value={formData.phone || ''}
-                        onChange={(e) => handleInputChange('phone', e.target.value)}
-                        placeholder="+1 (555) 123-4567"
-                        className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#0066CC] focus:border-transparent"
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">Email Address</label>
-                      <input 
-                        type="email" 
-                        value={formData.email || ''}
-                        onChange={(e) => handleInputChange('email', e.target.value)}
-                        placeholder="patient@email.com"
-                        className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#0066CC] focus:border-transparent"
-                      />
-                    </div>
-                    <div className="md:col-span-2">
-                      <label className="block text-sm font-medium text-gray-700 mb-2">Address</label>
-                      <input 
-                        type="text" 
-                        value={formData.address || ''}
-                        onChange={(e) => handleInputChange('address', e.target.value)}
-                        placeholder="123 Main St, City, State, ZIP"
-                        className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#0066CC] focus:border-transparent"
-                      />
-                    </div>
-                  </div>
-                </div>
-
-                {/* Medical Information */}
-                <div>
-                  <h3 className="text-sm font-semibold text-gray-900 mb-4 flex items-center gap-2">
-                    <Activity size={16} className="text-[#0066CC]" />
-                    Medical Information
-                  </h3>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">Department</label>
-                      <select 
-                        value={formData.dept || ''}
-                        onChange={(e) => handleInputChange('dept', e.target.value)}
-                        className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#0066CC] focus:border-transparent"
-                      >
-                        <option value="">Select Department</option>
-                        <option value="Cardiology">Cardiology</option>
-                        <option value="Surgery">Surgery</option>
-                        <option value="General">General</option>
-                        <option value="Neurology">Neurology</option>
-                        <option value="Pediatrics">Pediatrics</option>
-                        <option value="Orthopedics">Orthopedics</option>
-                      </select>
-                    </div>
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">Status</label>
-                      <select 
-                        value={formData.status || ''}
-                        onChange={(e) => handleInputChange('status', e.target.value)}
-                        className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#0066CC] focus:border-transparent"
-                      >
-                        <option value="Active">Active</option>
-                        <option value="Discharged">Discharged</option>
-                        <option value="Critical">Critical</option>
-                      </select>
-                    </div>
-                    <div className="md:col-span-2">
-                      <label className="block text-sm font-medium text-gray-700 mb-2">Current Diagnosis</label>
-                      <textarea 
-                        value={formData.diagnosis || ''}
-                        onChange={(e) => handleInputChange('diagnosis', e.target.value)}
-                        rows={3}
-                        placeholder="Enter diagnosis details..."
-                        className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#0066CC] focus:border-transparent"
-                      />
-                    </div>
-                  </div>
-                </div>
-
-                {/* Additional Notes */}
-                <div>
-                  <h3 className="text-sm font-semibold text-gray-900 mb-4 flex items-center gap-2">
-                    <FileText size={16} className="text-[#0066CC]" />
-                    Additional Notes
-                  </h3>
+              {/* Contact Information */}
+              <div>
+                <h3 className="text-sm font-semibold text-gray-900 mb-4 flex items-center gap-2">
+                  <Phone size={16} className="text-[#0066CC]" />
+                  Contact Information
+                </h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Medical History & Notes</label>
-                    <textarea 
-                      value={formData.notes || ''}
-                      onChange={(e) => handleInputChange('notes', e.target.value)}
-                      rows={4}
-                      placeholder="Add any additional medical history, allergies, or important notes..."
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Phone Number</label>
+                    <input 
+                      type="tel" 
+                      value={formData.phone || ''}
+                      onChange={(e) => handleInputChange('phone', e.target.value)}
+                      placeholder="+1 (555) 123-4567"
+                      className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#0066CC] focus:border-transparent"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Email Address</label>
+                    <input 
+                      type="email" 
+                      value={formData.email || ''}
+                      onChange={(e) => handleInputChange('email', e.target.value)}
+                      placeholder="patient@email.com"
+                      className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#0066CC] focus:border-transparent"
+                    />
+                  </div>
+                  <div className="md:col-span-2">
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Address</label>
+                    <input 
+                      type="text" 
+                      value={formData.address || ''}
+                      onChange={(e) => handleInputChange('address', e.target.value)}
+                      placeholder="123 Main St, City, State, ZIP"
                       className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#0066CC] focus:border-transparent"
                     />
                   </div>
                 </div>
               </div>
 
-              {/* Modal Footer */}
-              <div className="sticky bottom-0 bg-gray-50 border-t border-gray-200 px-6 py-4 flex items-center justify-between rounded-b-2xl">
-                <button 
-                  className="px-4 py-2.5 border-2 border-red-300 text-red-600 rounded-lg font-medium hover:bg-red-50 transition-colors"
-                >
-                  Delete Patient
-                </button>
-                <div className="flex gap-3">
-                  <button 
-                    onClick={() => setEditingPatient(null)}
-                    className="px-4 py-2.5 border border-gray-300 text-gray-700 rounded-lg font-medium hover:bg-gray-100 transition-colors"
-                  >
-                    Cancel
-                  </button>
-                  <button 
-                    onClick={handleSavePatient}
-                    className="px-6 py-2.5 bg-[#0066CC] hover:bg-[#0052A3] text-white rounded-lg font-medium shadow-md hover:shadow-lg transition-all"
-                  >
-                    Save Changes
-                  </button>
+              {/* Medical Information */}
+              <div>
+                <h3 className="text-sm font-semibold text-gray-900 mb-4 flex items-center gap-2">
+                  <Activity size={16} className="text-[#0066CC]" />
+                  Medical Information
+                </h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Department</label>
+                    <select 
+                      value={formData.dept || ''}
+                      onChange={(e) => handleInputChange('dept', e.target.value)}
+                      className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#0066CC] focus:border-transparent"
+                    >
+                      <option value="">Select Department</option>
+                      <option value="Cardiology">Cardiology</option>
+                      <option value="Surgery">Surgery</option>
+                      <option value="General">General</option>
+                      <option value="Neurology">Neurology</option>
+                      <option value="Pediatrics">Pediatrics</option>
+                      <option value="Orthopedics">Orthopedics</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Status</label>
+                    <select 
+                      value={formData.status || ''}
+                      onChange={(e) => handleInputChange('status', e.target.value)}
+                      className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#0066CC] focus:border-transparent"
+                    >
+                      <option value="Active">Active</option>
+                      <option value="Discharged">Discharged</option>
+                      <option value="Critical">Critical</option>
+                    </select>
+                  </div>
+                  <div className="md:col-span-2">
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Current Diagnosis</label>
+                    <textarea 
+                      value={formData.diagnosis || ''}
+                      onChange={(e) => handleInputChange('diagnosis', e.target.value)}
+                      rows={3}
+                      placeholder="Enter diagnosis details..."
+                      className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#0066CC] focus:border-transparent"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              {/* Additional Notes */}
+              <div>
+                <h3 className="text-sm font-semibold text-gray-900 mb-4 flex items-center gap-2">
+                  <FileText size={16} className="text-[#0066CC]" />
+                  Additional Notes
+                </h3>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Medical History & Notes</label>
+                  <textarea 
+                    value={formData.notes || ''}
+                    onChange={(e) => handleInputChange('notes', e.target.value)}
+                    rows={4}
+                    placeholder="Add any additional medical history, allergies, or important notes..."
+                    className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#0066CC] focus:border-transparent"
+                  />
                 </div>
               </div>
             </div>
+
+            {/* Modal Footer */}
+            <div className="sticky bottom-0 bg-gray-50 border-t border-gray-200 px-6 py-4 flex items-center justify-between rounded-b-2xl">
+              <button 
+                className="px-4 py-2.5 border-2 border-red-300 text-red-600 rounded-lg font-medium hover:bg-red-50 transition-colors"
+              >
+                Delete Patient
+              </button>
+              <div className="flex gap-3">
+                <button 
+                  onClick={() => setEditingPatient(null)}
+                  className="px-4 py-2.5 border border-gray-300 text-gray-700 rounded-lg font-medium hover:bg-gray-100 transition-colors"
+                >
+                  Cancel
+                </button>
+                <button 
+                  onClick={handleSavePatient}
+                  className="px-6 py-2.5 bg-[#0066CC] hover:bg-[#0052A3] text-white rounded-lg font-medium shadow-md hover:shadow-lg transition-all"
+                >
+                  Save Changes
+                </button>
+              </div>
+            </div>
           </div>
-        )}
-      </main>
+        </div>
+      )}
 
       {/* Export Modal */}
       {showExportModal && (
@@ -942,8 +960,15 @@ export default function Patients() {
           </div>
         </div>
       )}
-
-      <Footer />
+      
+      {/* Toast Notification */}
+      {toast && (
+        <Toast 
+          message={toast.message} 
+          type={toast.type} 
+          onClose={() => setToast(null)} 
+        />
+      )}
     </div>
   )
 }
