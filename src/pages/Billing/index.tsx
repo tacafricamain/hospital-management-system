@@ -58,7 +58,7 @@ export default function Billing() {
       <main className="flex-1 p-6 space-y-6 overflow-auto ml-64">
         <Navbar />
         
-        <div className="flex items-center justify-between">
+        <div className="flex items-center justify-between animate-fadeInUp" style={{ animationDelay: '0.1s' }}>
           <div>
             <h1 className="text-2xl font-bold text-gray-900">Billing & Invoices</h1>
             <p className="text-sm text-gray-500 mt-1">Manage payments and financial records</p>
@@ -72,7 +72,7 @@ export default function Billing() {
           </button>
         </div>
 
-        <div className="grid grid-cols-4 gap-4">
+        <div className="grid grid-cols-4 gap-4 animate-fadeInUp" style={{ animationDelay: '0.2s' }}>
           <div className="bg-white rounded-xl border p-4">
             <div className="flex items-center justify-between">
               <div>
@@ -84,9 +84,42 @@ export default function Billing() {
               </div>
             </div>
           </div>
+          <div className="bg-white rounded-xl border p-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm text-gray-500">Pending</p>
+                <p className="text-2xl font-bold mt-1">${stats.pending.toLocaleString()}</p>
+              </div>
+              <div className="p-3 bg-yellow-100 rounded-lg">
+                <Clock size={24} className="text-yellow-600" />
+              </div>
+            </div>
+          </div>
+          <div className="bg-white rounded-xl border p-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm text-gray-500">Overdue</p>
+                <p className="text-2xl font-bold mt-1">${stats.overdue.toLocaleString()}</p>
+              </div>
+              <div className="p-3 bg-red-100 rounded-lg">
+                <AlertCircle size={24} className="text-red-600" />
+              </div>
+            </div>
+          </div>
+          <div className="bg-white rounded-xl border p-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm text-gray-500">This Month</p>
+                <p className="text-2xl font-bold mt-1">${stats.thisMonth.toLocaleString()}</p>
+              </div>
+              <div className="p-3 bg-blue-100 rounded-lg">
+                <TrendingUp size={24} className="text-[#0066CC]" />
+              </div>
+            </div>
+          </div>
         </div>
 
-        <div className="bg-white rounded-xl border p-6">
+        <div className="bg-white rounded-xl border p-6 animate-fadeInUp" style={{ animationDelay: '0.3s' }}>
           <div className="flex gap-4 mb-4">
             <div className="flex-1">
               <input
