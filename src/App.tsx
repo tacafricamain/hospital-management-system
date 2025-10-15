@@ -9,7 +9,6 @@ import Doctors from './pages/Staff/Doctors'
 import Nurses from './pages/Staff/Nurses'
 import Receptionists from './pages/Staff/Receptionists'
 import Cleaners from './pages/Staff/Cleaners'
-import students from './pages/Staff/Cleaners'
 import Billing from './pages/Billing/index'
 
 const MobileWarning = () => {
