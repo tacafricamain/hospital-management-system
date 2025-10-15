@@ -80,7 +80,7 @@ export default function Navbar() {
           <input 
             type="text" 
             placeholder="Search patients, appointments..." 
-            className="flex-1 outline-none text-sm"
+            className="flex-1 outline-none text-sm bg-white text-gray-900 placeholder-gray-400"
           />
         </div>
       </div>
